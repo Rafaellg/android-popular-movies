@@ -11,6 +11,8 @@ import com.android.volley.toolbox.Volley;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.model.MovieListRequest;
 
+import java.util.ArrayList;
+
 /**
  * Created by Rafael on 09/04/2017.
  */
@@ -21,9 +23,8 @@ public class TmdbService {
 
     public static final String TMDB_API_KEY = "&api_key=91caf1cd00959c2c48d415ecb5f1d397";
     public static final String URL_BASE = "https://api.themoviedb.org/3/";
-    public static final String URL_DISCOVER = "discover/movie?";
-    public static final String PARAMETER_SORD_POPULARITY_DES = "sort_by=popularity.des";
-    public static final String PARAMETER_SORD_VOTE_AVERAGED_DES = "sort_by=vote_average.desc";
+    public static final String URL_MOVIE_POPULAR = "movie/popular?";
+    public static final String URL_MOVIE_TOP_RATED = "movie/top_rated?";
 
     private Context context;
 
@@ -44,26 +45,32 @@ public class TmdbService {
                     @Override
                     public void onResponse(MovieListRequest response) {
                         Log.d(TAG, "Movies found: " + response.getResults().size());
-                        completeListener.OnMovieListRequestComplete(response);
+                        completeListener.onMovieListRequestSuccess((ArrayList<Movie>) response.getResults());
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(context, "Error on getting movie list", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "Error: " + error.getMessage());
+                        completeListener.onMovieListRequestError();
+                    }
+                }
+        );
 
         // add the request to the RequestQueue
         queue.add(request);
     }
 
-    public void getMoviesByPopularity(OnMovieListRequestCompleteListener completeListener) {
-        getMoviesFromUrl(URL_BASE + URL_DISCOVER + PARAMETER_SORD_POPULARITY_DES, completeListener);
+    public void getPopularMovies(OnMovieListRequestCompleteListener completeListener) {
+        getMoviesFromUrl(URL_BASE + URL_MOVIE_POPULAR, completeListener);
+    }
+
+    public void getTopRatedMovies(OnMovieListRequestCompleteListener completeListener) {
+        getMoviesFromUrl(URL_BASE + URL_MOVIE_TOP_RATED, completeListener);
     }
 
     public interface OnMovieListRequestCompleteListener {
-        void OnMovieListRequestComplete(MovieListRequest request);
+        void onMovieListRequestSuccess(ArrayList<Movie> movieList);
+
+        void onMovieListRequestError();
     }
 }
