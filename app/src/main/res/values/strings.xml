@@ -2,4 +2,12 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_top_rated">Order by top rated</string>
     <string name="action_popular">Order by popular</string>
+    <string name="label_something_went_wrong">Something went wrong. No movies found.</string>
+    <string name="action_try_again">Try Again</string>
+    <string name="label_release_date_param">Release Date: %s</string>
+    <string name="label_language_param">Language: %s</string>
+    <string name="label_popularity_param">Popularity: %s</string>
+    <string name="title_movie_details">Details</string>
+    <string name="title_popular_movies">Popular Movies</string>
+    <string name="title_top_rated_movies">Top Rated Movies</string>
 </resources>

@@ -25,6 +25,7 @@ public class TmdbService {
     public static final String URL_BASE = "https://api.themoviedb.org/3/";
     public static final String URL_MOVIE_POPULAR = "movie/popular?";
     public static final String URL_MOVIE_TOP_RATED = "movie/top_rated?";
+    public static final String URL_POSTER_BASE = "http://image.tmdb.org/t/p/w500";
 
     private Context context;
 

@@ -2,6 +2,7 @@ package com.rafaelguimas.popularmovies.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,18 +13,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.rafaelguimas.popularmovies.R;
+import com.rafaelguimas.popularmovies.activity.MainActivity;
+import com.rafaelguimas.popularmovies.adapter.MovieListAdapter;
 import com.rafaelguimas.popularmovies.model.Movie;
-import com.rafaelguimas.popularmovies.model.MovieListRequest;
 import com.rafaelguimas.popularmovies.network.TmdbService;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MovieListFragment extends Fragment implements TmdbService.OnMovieListRequestCompleteListener {
 
@@ -33,6 +34,8 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
     @BindView(R.id.rv_movie_list)
     RecyclerView rvMovieList;
+    @BindView(R.id.cl_empty)
+    ConstraintLayout clEmpty;
 
     private int mColumnCount;
     private int mOrderBy;
@@ -82,25 +85,16 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
         // Create service
         mTmdbService = new TmdbService(getContext());
-
-        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_MOVIE_LIST)){
-            // Load movies from given order
-            if (mOrderBy == OrderBy.POPULAR.getValue()) {
-                mTmdbService.getPopularMovies(this);
-            } else {
-                mTmdbService.getTopRatedMovies(this);
-            }
-        } else {
-            onMovieListRequestSuccess(savedInstanceState.<Movie>getParcelableArrayList(KEY_MOVIE_LIST));
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-        // Set the butterknife
+        // Activate the butterknife
         ButterKnife.bind(this, view);
+
+        setupView();
 
         // Set the adapter
         if (mColumnCount <= 1) {
@@ -109,7 +103,28 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
             rvMovieList.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
         }
 
+        // Set the movie list
+        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_MOVIE_LIST)) {
+            loadMovies();
+        } else {
+            onMovieListRequestSuccess(savedInstanceState.<Movie>getParcelableArrayList(KEY_MOVIE_LIST));
+        }
+
         return view;
+    }
+
+    private void setupView() {
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(mOrderBy == OrderBy.POPULAR.getValue()? R.string.title_popular_movies : R.string.title_top_rated_movies);
+    }
+
+    private void loadMovies() {
+        // Load movies from given order
+        if (mOrderBy == OrderBy.POPULAR.getValue()) {
+            mTmdbService.getPopularMovies(this);
+        } else {
+            mTmdbService.getTopRatedMovies(this);
+        }
     }
 
     @Override
@@ -121,16 +136,17 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_order_popular:
+                mOrderBy = OrderBy.POPULAR.getValue();
                 mTmdbService.getPopularMovies(this);
                 break;
             case R.id.action_order_top_rated:
+                mOrderBy = OrderBy.TOP_RATED.getValue();
                 mTmdbService.getTopRatedMovies(this);
                 break;
         }
@@ -155,8 +171,16 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
         mListener = null;
     }
 
+    @OnClick(R.id.bt_try_again)
+    public void onTryAgainClick() {
+        loadMovies();
+    }
+
     @Override
     public void onMovieListRequestSuccess(ArrayList<Movie> movieList) {
+        // Update the view
+        setupView();
+
         // Save movie list
         mMovieList = movieList;
 
@@ -166,7 +190,8 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
     @Override
     public void onMovieListRequestError() {
-        Toast.makeText(getContext(), "Error on getting movie list", Toast.LENGTH_SHORT).show();
+        clEmpty.setVisibility(View.VISIBLE);
+        rvMovieList.setVisibility(View.GONE);
     }
 
     public interface OnMovieItemClickListener {

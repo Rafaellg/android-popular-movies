@@ -1,4 +1,4 @@
-package com.rafaelguimas.popularmovies.fragment;
+package com.rafaelguimas.popularmovies.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.fragment.MovieListFragment.OnMovieItemClickListener;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.network.TmdbService;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -19,8 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
-
-    private static final String URL_POSTER_BASE = "http://image.tmdb.org/t/p/w500";
 
     private final List<Movie> mValues;
     private final OnMovieItemClickListener mListener;
@@ -44,7 +41,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         String releaseDate = mValues.get(position).getReleaseDate();
         holder.tvMovieReleaseDate.setText(releaseDate.isEmpty()? "" : releaseDate.substring(0,4));
 
-        String posterUrl = URL_POSTER_BASE + mValues.get(position).getPosterPath().toString();
+        String posterUrl = TmdbService.URL_POSTER_BASE + mValues.get(position).getPosterPath().toString();
 //        Picasso.with(holder.itemView.getContext()).load(posterUrl).placeholder(R.mipmap.ic_launcher).into(holder.ivMoviePoster);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
