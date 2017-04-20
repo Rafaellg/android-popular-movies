@@ -2,7 +2,6 @@ package com.rafaelguimas.popularmovies.network;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,7 +20,7 @@ public class TmdbService {
 
     private static final String TAG = "TmdbService";
 
-    public static final String TMDB_API_KEY = "&api_key=91caf1cd00959c2c48d415ecb5f1d397";
+    public static final String TMDB_API_KEY = "&api_key=YOUR_API_KEY";
     public static final String URL_BASE = "https://api.themoviedb.org/3/";
     public static final String URL_MOVIE_POPULAR = "movie/popular?";
     public static final String URL_MOVIE_TOP_RATED = "movie/top_rated?";
