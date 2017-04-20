@@ -13,7 +13,7 @@
         <ImageView
             android:id="@+id/iv_movie_background"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="240dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_movie_placeholder"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -81,7 +81,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:elevation="2dp"
@@ -91,7 +90,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/cv_movie_poster"
             app:layout_constraintLeft_toRightOf="@+id/cv_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_title"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -102,7 +101,7 @@
             android:elevation="2dp"
             android:src="@drawable/ic_thumb_up_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_movie_vote_average"
-            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/tv_movie_vote_average"
             app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
             app:layout_constraintTop_toTopOf="@+id/tv_movie_vote_average" />
@@ -114,7 +113,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:elevation="2dp"
             android:text="A story about how a new baby's arrival impacts a family, told from the point of view of a delightfully unreliable narrator, a wildly imaginative 7 year old named Tim."
             android:textColor="@android:color/primary_text_light"
@@ -122,7 +121,20 @@
             app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
             app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
             app:layout_constraintTop_toBottomOf="@+id/cv_movie_poster"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/vw_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/darker_gray"
+            android:elevation="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
+            app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
+            app:layout_constraintTop_toBottomOf="@+id/tv_movie_overview" />
 
         <TextView
             android:id="@+id/tv_movie_release_date"
@@ -137,8 +149,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/cv_info_bg"
             app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
             app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
-            app:layout_constraintTop_toBottomOf="@+id/tv_movie_overview"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintTop_toBottomOf="@+id/vw_divider"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tv_movie_language"
@@ -154,7 +166,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
             app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_release_date"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tv_movie_popularity"
@@ -171,7 +183,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
             app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_language"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 

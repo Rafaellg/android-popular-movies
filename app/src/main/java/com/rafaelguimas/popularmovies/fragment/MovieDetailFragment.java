@@ -75,12 +75,15 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupView() {
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Hide the toolbar
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
 
+        // Set the poster and background
         String posterUrl = TmdbService.URL_POSTER_BASE + mMovie.getPosterPath();
-        Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).transform(new BlurTransformation(getContext(), 10)).into(ivMovieBackground);
+        Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).transform(new BlurTransformation(getContext(), 20)).into(ivMovieBackground);
         Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).into(ivMoviePoster);
 
+        // Set the movie info
         tvMovieTitle.setText(mMovie.getOriginalTitle());
         tvMovieVoteAverage.setText(mMovie.getVoteAverage().toString());
         tvMovieOverview.setText(mMovie.getOverview());
@@ -89,4 +92,9 @@ public class MovieDetailFragment extends Fragment {
         tvMoviePopularity.setText(getString(R.string.label_popularity_param, mMovie.getPopularity().toString()));
     }
 
+    @Override
+    public void onDestroyView() {
+        ((MainActivity) getActivity()).getSupportActionBar().show();
+        super.onDestroyView();
+    }
 }
