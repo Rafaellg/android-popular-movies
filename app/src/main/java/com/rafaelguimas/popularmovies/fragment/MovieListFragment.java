@@ -43,12 +43,12 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     private OnMovieItemClickListener mListener;
     private ArrayList<Movie> mMovieList;
 
-    public enum OrderBy {
+    public enum EnumOrderOptions {
         POPULAR(1), TOP_RATED(2);
 
         private int value;
 
-        OrderBy(int value) {
+        EnumOrderOptions(int value) {
             this.value = value;
         }
 
@@ -115,12 +115,12 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
     private void setupView() {
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(mOrderBy == OrderBy.POPULAR.getValue()? R.string.title_popular_movies : R.string.title_top_rated_movies);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(mOrderBy == EnumOrderOptions.POPULAR.getValue()? R.string.title_popular_movies : R.string.title_top_rated_movies);
     }
 
     private void loadMovies() {
         // Load movies from given order
-        if (mOrderBy == OrderBy.POPULAR.getValue()) {
+        if (mOrderBy == EnumOrderOptions.POPULAR.getValue()) {
             mTmdbService.getPopularMovies(this);
         } else {
             mTmdbService.getTopRatedMovies(this);
@@ -142,11 +142,11 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_order_popular:
-                mOrderBy = OrderBy.POPULAR.getValue();
+                mOrderBy = EnumOrderOptions.POPULAR.getValue();
                 mTmdbService.getPopularMovies(this);
                 break;
             case R.id.action_order_top_rated:
-                mOrderBy = OrderBy.TOP_RATED.getValue();
+                mOrderBy = EnumOrderOptions.TOP_RATED.getValue();
                 mTmdbService.getTopRatedMovies(this);
                 break;
         }

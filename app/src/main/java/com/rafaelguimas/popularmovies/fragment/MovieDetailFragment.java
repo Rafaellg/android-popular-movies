@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class MovieDetailFragment extends Fragment {
 
@@ -77,7 +78,7 @@ public class MovieDetailFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String posterUrl = TmdbService.URL_POSTER_BASE + mMovie.getPosterPath();
-        Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).into(ivMovieBackground);
+        Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).transform(new BlurTransformation(getContext(), 10)).into(ivMovieBackground);
         Picasso.with(getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).into(ivMoviePoster);
 
         tvMovieTitle.setText(mMovie.getOriginalTitle());

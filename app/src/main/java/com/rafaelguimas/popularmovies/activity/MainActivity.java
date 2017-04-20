@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
         // Open the movie list fragment
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container_main, MovieListFragment.newInstance(3, MovieListFragment.OrderBy.POPULAR.getValue()))
+                .replace(R.id.container_main, MovieListFragment.newInstance(3, MovieListFragment.EnumOrderOptions.POPULAR.getValue()))
                 .addToBackStack(null)
                 .commit();
     }

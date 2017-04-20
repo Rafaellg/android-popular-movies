@@ -11,6 +11,7 @@ import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.fragment.MovieListFragment.OnMovieItemClickListener;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.network.TmdbService;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         holder.tvMovieReleaseDate.setText(releaseDate.isEmpty()? "" : releaseDate.substring(0,4));
 
         String posterUrl = TmdbService.URL_POSTER_BASE + mValues.get(position).getPosterPath().toString();
-//        Picasso.with(holder.itemView.getContext()).load(posterUrl).placeholder(R.mipmap.ic_launcher).into(holder.ivMoviePoster);
+        Picasso.with(holder.itemView.getContext()).load(posterUrl).placeholder(R.drawable.img_movie_placeholder).into(holder.ivMoviePoster);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
