@@ -11,9 +11,12 @@ import android.widget.TextView;
 
 import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.activity.MainActivity;
+import com.rafaelguimas.popularmovies.activity.MovieDetailActivity;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.network.TmdbService;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +24,7 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class MovieDetailFragment extends Fragment {
 
-    private static final String ARG_MOVIE = "param1";
+    private static final String ARG_MOVIE = "movie";
 
     @BindView(R.id.iv_movie_background)
     ImageView ivMovieBackground;
@@ -41,6 +44,7 @@ public class MovieDetailFragment extends Fragment {
     TextView tvMoviePopularity;
 
     private Movie mMovie;
+    private TmdbService mTmdbService;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -57,9 +61,13 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mMovie = getArguments().getParcelable(ARG_MOVIE);
         }
+
+        // Create service
+        mTmdbService = new TmdbService(getContext());
     }
 
     @Override
@@ -69,6 +77,7 @@ public class MovieDetailFragment extends Fragment {
         // Activate the butterknife
         ButterKnife.bind(this, view);
 
+        // Set the view elements
         setupView();
 
         return view;
@@ -76,7 +85,7 @@ public class MovieDetailFragment extends Fragment {
 
     private void setupView() {
         // Hide the toolbar
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
+        ((MovieDetailActivity) getActivity()).getSupportActionBar().hide();
 
         // Set the poster and background
         String posterUrl = TmdbService.URL_POSTER_BASE + mMovie.getPosterPath();
@@ -94,7 +103,7 @@ public class MovieDetailFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        ((MainActivity) getActivity()).getSupportActionBar().show();
+        ((MovieDetailActivity) getActivity()).getSupportActionBar().show();
         super.onDestroyView();
     }
 }

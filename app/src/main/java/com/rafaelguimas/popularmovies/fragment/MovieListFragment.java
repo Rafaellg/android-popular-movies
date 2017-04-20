@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MovieListFragment extends Fragment implements TmdbService.OnMovieListRequestCompleteListener {
+public class MovieListFragment extends Fragment implements TmdbService.OnMovieListRequestListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_ORDER_BY = "order-by";
