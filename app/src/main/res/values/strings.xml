@@ -10,4 +10,6 @@
     <string name="title_movie_details">Details</string>
     <string name="title_popular_movies">Popular Movies</string>
     <string name="title_top_rated_movies">Top Rated Movies</string>
+    <string name="label_searching_movies">Searching movies...</string>
+    <string name="label_no_connection">You have no internet connection.</string>
 </resources>

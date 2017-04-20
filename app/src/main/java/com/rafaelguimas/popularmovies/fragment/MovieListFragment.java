@@ -1,6 +1,9 @@
 package com.rafaelguimas.popularmovies.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -13,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.activity.MainActivity;
@@ -42,6 +46,7 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     private TmdbService mTmdbService;
     private OnMovieItemClickListener mListener;
     private ArrayList<Movie> mMovieList;
+    private ProgressDialog progressDialog;
 
     public enum EnumOrderOptions {
         POPULAR(1), TOP_RATED(2);
@@ -114,17 +119,32 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     }
 
     private void setupView() {
+        // Set the toolbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(mOrderBy == EnumOrderOptions.POPULAR.getValue()? R.string.title_popular_movies : R.string.title_top_rated_movies);
+
+        // Change the visibility
+        clEmpty.setVisibility(View.GONE);
+        rvMovieList.setVisibility(View.VISIBLE);
     }
 
     private void loadMovies() {
+        showProgressDialog();
+
         // Load movies from given order
         if (mOrderBy == EnumOrderOptions.POPULAR.getValue()) {
             mTmdbService.getPopularMovies(this);
         } else {
             mTmdbService.getTopRatedMovies(this);
         }
+    }
+
+    private void showProgressDialog() {
+        progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.label_searching_movies));
+    }
+
+    private void hideProgressDialog() {
+        progressDialog.hide();
     }
 
     @Override
@@ -178,6 +198,8 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
     @Override
     public void onMovieListRequestSuccess(ArrayList<Movie> movieList) {
+        hideProgressDialog();
+
         // Update the view
         setupView();
 
@@ -190,8 +212,20 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
     @Override
     public void onMovieListRequestError() {
+        hideProgressDialog();
+
         clEmpty.setVisibility(View.VISIBLE);
         rvMovieList.setVisibility(View.GONE);
+
+        if (!isOnline()) {
+            Toast.makeText(getContext(), R.string.label_no_connection, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     public interface OnMovieItemClickListener {
