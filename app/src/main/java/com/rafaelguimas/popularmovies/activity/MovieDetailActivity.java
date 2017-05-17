@@ -1,5 +1,7 @@
 package com.rafaelguimas.popularmovies.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.fragment.MovieDetailFragment;
 import com.rafaelguimas.popularmovies.model.Movie;
+import com.rafaelguimas.popularmovies.model.Trailer;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements MovieDetailFragment.OnTrailerItemClickListener {
 
     public static String EXTRA_MOVIE = "movie";
 
@@ -30,4 +33,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public void onTrailerItemClick(Trailer trailer) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailer.getKey()));
+        startActivity(intent);
+    }
 }

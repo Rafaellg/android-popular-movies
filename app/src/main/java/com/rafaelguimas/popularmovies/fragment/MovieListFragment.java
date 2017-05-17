@@ -181,7 +181,7 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
             mListener = (OnMovieItemClickListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnMovieItemClickListener");
         }
     }
 

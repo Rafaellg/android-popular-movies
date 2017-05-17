@@ -1,4 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -185,6 +185,51 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_language"
             app:layout_constraintVertical_bias="0.0" />
 
+        <View
+            android:id="@+id/vw_divider2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/darker_gray"
+            android:elevation="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
+            app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
+            app:layout_constraintTop_toBottomOf="@+id/tv_movie_popularity" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_trailer_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
+            app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
+            app:layout_constraintTop_toBottomOf="@+id/vw_divider2"
+            tools:listitem="@layout/item_list_trailer" />
+
+        <View
+            android:id="@+id/vw_divider3"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/darker_gray"
+            android:elevation="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
+            app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
+            app:layout_constraintTop_toBottomOf="@+id/rv_trailer_list" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_review_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/cv_info_bg"
+            app:layout_constraintRight_toRightOf="@+id/cv_info_bg"
+            app:layout_constraintTop_toBottomOf="@+id/vw_divider3"
+            tools:listitem="@layout/item_list_review" />
+
     </android.support.constraint.ConstraintLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

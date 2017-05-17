@@ -8,7 +8,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.rafaelguimas.popularmovies.model.Movie;
-import com.rafaelguimas.popularmovies.model.MovieListRequest;
+import com.rafaelguimas.popularmovies.model.Review;
+import com.rafaelguimas.popularmovies.model.Trailer;
+import com.rafaelguimas.popularmovies.network.response.MovieListResponse;
+import com.rafaelguimas.popularmovies.network.response.ReviewListResponse;
+import com.rafaelguimas.popularmovies.network.response.TrailerListResponse;
 
 import java.util.ArrayList;
 
@@ -20,7 +24,7 @@ public class TmdbService {
 
     private static final String TAG = "TmdbService";
 
-    private static final String TMDB_API_KEY = "?api_key=YOUR_API_KEY";
+    private static final String TMDB_API_KEY = "?api_key=91caf1cd00959c2c48d415ecb5f1d397";
     private static final String URL_BASE = "https://api.themoviedb.org/3";
     private static final String URL_MOVIE_POPULAR = "/movie/popular";
     private static final String URL_MOVIE_TOP_RATED = "/movie/top_rated";
@@ -43,10 +47,10 @@ public class TmdbService {
         url = URL_BASE + url + TMDB_API_KEY;
 
         // request a string response asynchronously from the provided URL
-        GsonRequest<MovieListRequest> request = new GsonRequest<>(url, MovieListRequest.class, null,
-                new Response.Listener<MovieListRequest>() {
+        GsonRequest<MovieListResponse> request = new GsonRequest<>(url, MovieListResponse.class, null,
+                new Response.Listener<MovieListResponse>() {
                     @Override
-                    public void onResponse(MovieListRequest response) {
+                    public void onResponse(MovieListResponse response) {
                         Log.d(TAG, "Movies found: " + response.getResults().size());
                         requestListener.onMovieListRequestSuccess((ArrayList<Movie>) response.getResults());
                     }
@@ -76,15 +80,15 @@ public class TmdbService {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         // Add the api key
-        String url = URL_BASE + URL_MOVIE + movieId + URL_REVIEWS + TMDB_API_KEY;
+        String url = URL_BASE + URL_MOVIE + "/" + movieId + URL_REVIEWS + TMDB_API_KEY;
 
         // request a string response asynchronously from the provided URL
-        GsonRequest<MovieListRequest> request = new GsonRequest<>(url, MovieListRequest.class, null,
-                new Response.Listener<MovieListRequest>() {
+        GsonRequest<ReviewListResponse> request = new GsonRequest<>(url, ReviewListResponse.class, null,
+                new Response.Listener<ReviewListResponse>() {
                     @Override
-                    public void onResponse(MovieListRequest response) {
+                    public void onResponse(ReviewListResponse response) {
                         Log.d(TAG, "Reviews found: " + response.getResults().size());
-                        requestListener.onMovieReviewsRequestSuccess((ArrayList<Movie>) response.getResults());
+                        requestListener.onMovieReviewsRequestSuccess((ArrayList<Review>) response.getResults());
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -104,15 +108,15 @@ public class TmdbService {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         // Add the api key
-        String url = URL_BASE + URL_MOVIE + movieId + URL_VIDEOS + TMDB_API_KEY;
+        String url = URL_BASE + URL_MOVIE + "/" + movieId + URL_VIDEOS + TMDB_API_KEY;
 
         // request a string response asynchronously from the provided URL
-        GsonRequest<MovieListRequest> request = new GsonRequest<>(url, MovieListRequest.class, null,
-                new Response.Listener<MovieListRequest>() {
+        GsonRequest<TrailerListResponse> request = new GsonRequest<>(url, TrailerListResponse.class, null,
+                new Response.Listener<TrailerListResponse>() {
                     @Override
-                    public void onResponse(MovieListRequest response) {
-                        Log.d(TAG, "Reviews found: " + response.getResults().size());
-                        requestListener.onMovieVideoRequestSuccess((ArrayList<Movie>) response.getResults());
+                    public void onResponse(TrailerListResponse response) {
+                        Log.d(TAG, "Trailers found: " + response.getResults().size());
+                        requestListener.onMovieVideoRequestSuccess((ArrayList<Trailer>) response.getResults());
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -133,12 +137,12 @@ public class TmdbService {
     }
 
     public interface OnMovieReviewsRequestListener {
-        void onMovieReviewsRequestSuccess(ArrayList<Movie> movieList);
+        void onMovieReviewsRequestSuccess(ArrayList<Review> trailerList);
         void onMovieReviewsRequestError();
     }
 
     public interface OnMovieVideosRequestListener {
-        void onMovieVideoRequestSuccess(ArrayList<Movie> movieList);
+        void onMovieVideoRequestSuccess(ArrayList<Trailer> movieList);
         void onMovieVideoRequestError();
     }
 }
