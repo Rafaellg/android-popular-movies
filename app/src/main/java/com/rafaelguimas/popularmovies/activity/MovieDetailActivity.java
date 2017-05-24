@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.fragment.MovieDetailFragment;
@@ -35,7 +36,11 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
 
     @Override
     public void onTrailerItemClick(Trailer trailer) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailer.getKey()));
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailer.getKey()));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, R.string.alert_youtube_not_found, Toast.LENGTH_SHORT).show();
+        }
     }
 }

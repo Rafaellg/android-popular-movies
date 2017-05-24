@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".PopularMovieApplication">
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize">
@@ -29,6 +30,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rafaelguimas.popularmovies.activity.MainActivity" />
         </activity>
+
+        <provider
+            android:name=".data.MoviesProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

@@ -1,11 +1,16 @@
 package com.rafaelguimas.popularmovies.fragment;
 
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rafaelguimas.popularmovies.R;
-import com.rafaelguimas.popularmovies.activity.MainActivity;
 import com.rafaelguimas.popularmovies.activity.MovieDetailActivity;
 import com.rafaelguimas.popularmovies.adapter.ReviewListAdapter;
 import com.rafaelguimas.popularmovies.adapter.TrailerListAdapter;
+import com.rafaelguimas.popularmovies.data.MovieContract;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.model.Review;
 import com.rafaelguimas.popularmovies.model.Trailer;
@@ -30,7 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
-public class MovieDetailFragment extends Fragment implements TmdbService.OnMovieVideosRequestListener, TmdbService.OnMovieReviewsRequestListener{
+public class MovieDetailFragment extends Fragment implements TmdbService.OnMovieVideosRequestListener,
+        TmdbService.OnMovieReviewsRequestListener {
 
     private static final String ARG_MOVIE = "movie";
 
@@ -54,10 +60,13 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
     RecyclerView rvTrailerList;
     @BindView(R.id.rv_review_list)
     RecyclerView rvReviewList;
+    @BindView(R.id.fab_favorite)
+    FloatingActionButton fabFavorite;
 
     private Movie mMovie;
     private TmdbService mTmdbService;
     private OnTrailerItemClickListener mListener;
+    private boolean isFavored = false;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -120,6 +129,68 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
         rvReviewList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvTrailerList.setNestedScrollingEnabled(false);
         rvReviewList.setNestedScrollingEnabled(false);
+
+        // Verify if movie exist in local database
+        Cursor cursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{mMovie.getId().toString()},
+                null,
+                null);
+        isFavored = cursor != null && cursor.getCount() > 0;
+        changeFabIcon();
+
+        // Set the favorite action
+        fabFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isFavored) {
+                    saveMovieOnDatabase();
+                } else {
+                    removeMovieFromDatabase();
+                }
+            }
+        });
+    }
+
+    private void saveMovieOnDatabase() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
+
+        Uri uri = getContext().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+
+        if (uri != null) {
+            Log.i(MovieDetailFragment.class.getSimpleName(), "Movie saved. Uri: " + uri.toString());
+            Toast.makeText(getContext(), R.string.message_movie_offline_inserted, Toast.LENGTH_LONG).show();
+            isFavored = true;
+            changeFabIcon();
+        }
+    }
+
+    private void removeMovieFromDatabase() {
+        int rowsDeleted = getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{mMovie.getId().toString()});
+
+        if (rowsDeleted > 0) {
+            Log.i(MovieDetailFragment.class.getSimpleName(), "Movie deleted. ID: " + mMovie.getId());
+            Toast.makeText(getContext(), R.string.message_movie_offline_removed, Toast.LENGTH_LONG).show();
+            isFavored = false;
+            changeFabIcon();
+        }
+    }
+
+    private void changeFabIcon() {
+        int iconResource;
+
+        if (isFavored) {
+            iconResource = R.drawable.ic_favorite_black_24dp;
+        } else {
+            iconResource = R.drawable.ic_favorite_border_black_24dp;
+        }
+
+        fabFavorite.setImageResource(iconResource);
     }
 
     @Override
@@ -153,7 +224,7 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
 
     @Override
     public void onMovieReviewsRequestError() {
-        Toast.makeText(getContext(), "Erro ao buscar as reviews", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Erro ao buscar as reviews.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -164,7 +235,7 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
 
     @Override
     public void onMovieVideoRequestError() {
-        Toast.makeText(getContext(), "Erro ao buscar os trailers", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.error_loading_trailers, Toast.LENGTH_SHORT).show();
     }
 
     public interface OnTrailerItemClickListener {
