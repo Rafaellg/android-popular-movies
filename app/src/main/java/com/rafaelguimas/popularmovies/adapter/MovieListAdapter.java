@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
-    private final List<Movie> mValues;
+    private List<Movie> mValues;
     private final OnMovieItemClickListener mListener;
 
     public MovieListAdapter(List<Movie> items, OnMovieItemClickListener listener) {
@@ -61,6 +61,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
             return 0;
         }
         return mValues.size();
+    }
+
+    public void updateList(List<Movie> movieList) {
+        mValues = movieList;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

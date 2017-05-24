@@ -54,6 +54,8 @@ public class Movie implements Parcelable {
     @Expose
     private Float voteAverage;
 
+    public Movie() {}
+
     protected Movie(Parcel in) {
         posterPath = in.readString();
         byte adultVal = in.readByte();

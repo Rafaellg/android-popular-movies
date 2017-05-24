@@ -157,12 +157,23 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
         contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, mMovie.getPosterPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, mMovie.getReleaseDate());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_ADULT, mMovie.getAdult());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, mMovie.getOriginalTitle());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, mMovie.getOriginalLanguage());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, mMovie.getBackdropPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, mMovie.getPopularity());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, mMovie.getVoteCount());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, mMovie.getVoteAverage());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VIDEO, mMovie.getVideo());
 
         Uri uri = getContext().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
 
         if (uri != null) {
             Log.i(MovieDetailFragment.class.getSimpleName(), "Movie saved. Uri: " + uri.toString());
-            Toast.makeText(getContext(), R.string.message_movie_offline_inserted, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.message_movie_favored, Toast.LENGTH_SHORT).show();
             isFavored = true;
             changeFabIcon();
         }
@@ -175,7 +186,7 @@ public class MovieDetailFragment extends Fragment implements TmdbService.OnMovie
 
         if (rowsDeleted > 0) {
             Log.i(MovieDetailFragment.class.getSimpleName(), "Movie deleted. ID: " + mMovie.getId());
-            Toast.makeText(getContext(), R.string.message_movie_offline_removed, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.message_movie_unfavored, Toast.LENGTH_SHORT).show();
             isFavored = false;
             changeFabIcon();
         }

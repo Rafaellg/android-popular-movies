@@ -2,14 +2,19 @@ package com.rafaelguimas.popularmovies.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +26,8 @@ import android.widget.Toast;
 import com.rafaelguimas.popularmovies.R;
 import com.rafaelguimas.popularmovies.activity.MainActivity;
 import com.rafaelguimas.popularmovies.adapter.MovieListAdapter;
+import com.rafaelguimas.popularmovies.adapter.MovieListCursorAdapter;
+import com.rafaelguimas.popularmovies.data.MovieContract;
 import com.rafaelguimas.popularmovies.model.Movie;
 import com.rafaelguimas.popularmovies.network.TmdbService;
 
@@ -30,11 +37,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MovieListFragment extends Fragment implements TmdbService.OnMovieListRequestListener {
+public class MovieListFragment extends Fragment implements TmdbService.OnMovieListRequestListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_ORDER_BY = "order-by";
     private static final String KEY_MOVIE_LIST = "movie-list";
+
+    private static final int MOVIES_LOADER_ID = 0;
 
     @BindView(R.id.rv_movie_list)
     RecyclerView rvMovieList;
@@ -47,6 +56,8 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
     private OnMovieItemClickListener mListener;
     private ArrayList<Movie> mMovieList;
     private ProgressDialog progressDialog;
+    private MovieListAdapter mMovieListAdapter;
+    private MovieListCursorAdapter mMovieListCursorAdapter;
 
     public enum EnumOrderOptions {
         POPULAR(1), TOP_RATED(2);
@@ -101,13 +112,6 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
 
         setupView();
 
-        // Set the adapter
-        if (mColumnCount <= 1) {
-            rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else {
-            rvMovieList.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
-        }
-
         // Set the movie list
         if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_MOVIE_LIST)) {
             loadMovies();
@@ -126,6 +130,17 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
         // Change the visibility
         clEmpty.setVisibility(View.GONE);
         rvMovieList.setVisibility(View.VISIBLE);
+
+        // Set the adapter
+        if (mColumnCount <= 1) {
+            rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else {
+            rvMovieList.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
+        }
+
+        // Initiate the adapters
+        mMovieListAdapter = new MovieListAdapter(null, mListener);
+        mMovieListCursorAdapter = new MovieListCursorAdapter(getContext(), mListener);
     }
 
     private void loadMovies() {
@@ -169,6 +184,10 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
                 mOrderBy = EnumOrderOptions.TOP_RATED.getValue();
                 mTmdbService.getTopRatedMovies(this);
                 break;
+            case R.id.action_order_favored:
+                rvMovieList.setAdapter(mMovieListCursorAdapter);
+                getActivity().getSupportLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
+                break;
         }
 
         return true;
@@ -191,6 +210,13 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getActivity().getSupportLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
+    }
+
     @OnClick(R.id.bt_try_again)
     public void onTryAgainClick() {
         loadMovies();
@@ -207,7 +233,8 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
         mMovieList = movieList;
 
         // Set the adapter
-        rvMovieList.setAdapter(new MovieListAdapter(movieList, mListener));
+        mMovieListAdapter.updateList(movieList);
+        rvMovieList.setAdapter(mMovieListAdapter);
     }
 
     @Override
@@ -226,6 +253,52 @@ public class MovieListFragment extends Fragment implements TmdbService.OnMovieLi
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new AsyncTaskLoader<Cursor>(getContext()) {
+            Cursor mCursorMovie = null;
+
+            @Override
+            protected void onStartLoading() {
+                if (mCursorMovie != null) {
+                    deliverResult(mCursorMovie);
+                } else {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public Cursor loadInBackground() {
+                try {
+                    return getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            MovieContract.MovieEntry.COLUMN_TITLE);
+                } catch (Exception e) {
+                    Log.e(MovieListFragment.class.getSimpleName(), "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            public void deliverResult(Cursor data) {
+                mCursorMovie = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mMovieListCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieListCursorAdapter.swapCursor(null);
     }
 
     public interface OnMovieItemClickListener {
