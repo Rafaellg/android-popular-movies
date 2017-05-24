@@ -24,7 +24,7 @@ public class TmdbService {
 
     private static final String TAG = "TmdbService";
 
-    private static final String TMDB_API_KEY = "?api_key=91caf1cd00959c2c48d415ecb5f1d397";
+    private static final String TMDB_API_KEY = "?api_key=YOUR_API_KEY";
     private static final String URL_BASE = "https://api.themoviedb.org/3";
     private static final String URL_MOVIE_POPULAR = "/movie/popular";
     private static final String URL_MOVIE_TOP_RATED = "/movie/top_rated";
