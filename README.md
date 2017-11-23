@@ -1,2 +1,2 @@
-# android-popular-movies
+# Popular Movies app
 Udacity - Android Nanodegree
